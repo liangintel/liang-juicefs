@@ -123,6 +123,9 @@ func (l LZ4) CompressBound(size int) int { return lz4.CompressBound(size) }
 
 // Compress using LZ4 algorithm
 func (l LZ4) Compress(dst, src []byte) (int, error) {
+	if n, ok := qatLZ4Compress(dst, src); ok {
+		return n, nil
+	}
 	return lz4.CompressDefault(src, dst)
 }
 
@@ -130,6 +133,9 @@ func (l LZ4) Compress(dst, src []byte) (int, error) {
 func (l LZ4) Decompress(dst, src []byte) (int, error) {
 	if len(src) == 0 {
 		return 0, fmt.Errorf("decompress an empty input")
+	}
+	if n, ok := qatLZ4Decompress(dst, src); ok {
+		return n, nil
 	}
 	return lz4.DecompressSafe(src, dst)
 }
